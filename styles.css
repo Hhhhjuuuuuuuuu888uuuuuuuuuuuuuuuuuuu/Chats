@@ -1,0 +1,143 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #3b4a54;
+    color: white;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+a {
+    color: #00a884;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    color: #e9edef;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.main {
+    border: 1px dotted #4a5c65;
+    width: 100%;
+    min-height: 200px;
+    background-color: #222e35;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#subM {
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #1f2c33;
+    border-radius: 8px;
+    min-height: 150px;
+}
+
+.msg-input {
+    width: 80%;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #2a3942;
+    color: white;
+    display: block;
+}
+
+.msg-input.me {
+    background-color: #005c4b;
+    text-align: right;
+    margin-left: auto;
+    margin-right: 0;
+    margin-top: 10px;
+}
+
+.msg-input.them {
+    background-color: #202c33;
+    text-align: left;
+    margin-left: 11px;
+    margin-top: 10px;
+}
+
+form {
+    display: flex;
+    align-items: end;
+    justify-content: end;
+    gap: 10px;
+    margin-top: 25%;
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+textarea {
+    min-height: 2rem;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    align-content: center;
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 20px;
+    background-color: #2a3942;
+    color: white;
+    resize: none;
+    font-size: 14px;
+    min-height: 40px;
+    max-height: 120px;
+}
+
+textarea:focus {
+    outline: none;
+}
+
+input[type="button"] {
+    background-color: #00a884;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    height: fit-content;
+}
+
+input[type="button"]:hover {
+    background-color: #06cf9f;
+}
+
+/* Scrollbar styling */
+#subM::-webkit-scrollbar {
+    width: 6px;
+}
+
+#subM::-webkit-scrollbar-track {
+    background: #1f2c33;
+    border-radius: 10px;
+}
+
+#subM::-webkit-scrollbar-thumb {
+    background: #3b4a54;
+    border-radius: 10px;
+}
+
+/* Remove the original #them and #me styles as they're replaced by .msg-input classes */

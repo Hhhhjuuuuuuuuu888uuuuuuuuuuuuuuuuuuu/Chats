@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp-style Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #3b4a54;
+            color: white;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #222e35;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            padding: 15px;
+            background-color: #202c33;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #3b4a54;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #00a884;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        #messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 60vh;
+            background-color: #0b141a;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23333c43' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            position: relative;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.me {
+            background-color: #005c4b;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.them {
+            background-color: #202c33;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message-content {
+            font-size: 15px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #8696a0;
+            text-align: right;
+            margin-top: 3px;
+        }
+
+        .message.them .message-time {
+            text-align: left;
+        }
+
+        .input-container {
+            padding: 15px;
+            background-color: #202c33;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #text {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: #2a3942;
+            color: white;
+            resize: none;
+            font-size: 14px;
+            min-height: 20px;
+            max-height: 100px;
+            outline: none;
+        }
+
+        #sendBtn {
+            background-color: #00a884;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #sendBtn:hover {
+            background-color: #06cf9f;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            z-index: 100;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* Scrollbar styling */
+        #messages-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messages-container::-webkit-scrollbar-track {
+            background: #1f2c33;
+            border-radius: 10px;
+        }
+
+        #messages-container::-webkit-scrollbar-thumb {
+            background: #3b4a54;
+            border-radius: 10px;
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            background-color: #202c33;
+            padding: 10px 15px;
+            border-radius: 18px;
+            align-self: flex-start;
+            margin-bottom: 5px;
+            display: none;
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            float: left;
+            margin: 0 1px;
+            background-color: #8696a0;
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .typing-indicator span:nth-of-type(1) {
+            animation: typing 1s infinite;
+        }
+
+        .typing-indicator span:nth-of-type(2) {
+            animation: typing 1s 0.33s infinite;
+        }
+
+        .typing-indicator span:nth-of-type(3) {
+            animation: typing 1s 0.66s infinite;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <div class="user-info">
+                <div class="avatar">M</div>
+                <div>
+                    <div class="user-name">Collins</div>
+                    <div class="user-status">(I will text when am online)</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <i>🔍</i>
+                <i>⋮</i>
+            </div>
+        </div>
+
+        <div id="messages-container">
+            <div class="scroll-indicator">Scroll to see older messages</div>
+            <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <!-- Messages will be inserted here by JavaScript -->
+        </div>
+
+        <div class="input-container">
+            <textarea id="text" placeholder="Type a message" rows="1"></textarea>
+            <button id="sendBtn">➤</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXSHi1aSU8ShhufVEhL0x5SL1Jm4Fs6rc",
+            authDomain: "store-names-1afa0.firebaseapp.com",
+            projectId: "store-names-1afa0",
+            storageBucket: "store-names-1afa0.firebasestorage.app",
+            messagingSenderId: "370617677835",
+            appId: "1:370617677835:web:082dac586526761458af0e",
+            measurementId: "G-5HSPJBF5FY"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Global variables
+        let currentUser = 'me'; // Default user
+        let isNearBottom = true;
+
+        // Initialize the chat when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Load existing messages
+            loadMessages();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            const textInput = document.getElementById('text');
+            const sendBtn = document.getElementById('sendBtn');
+            const messagesContainer = document.getElementById('messages-container');
+            
+            // Send message on button click
+            sendBtn.addEventListener('click', sendMessageHandler);
+            
+            // Send message on Enter key (but allow Shift+Enter for new line)
+            textInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessageHandler();
+                }
+            });
+            
+            // Auto-resize textarea
+            textInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Show scroll indicator when not at bottom
+            messagesContainer.addEventListener('scroll', function() {
+                const threshold = 100;
+                isNearBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < threshold;
+                
+                const indicator = document.querySelector('.scroll-indicator');
+                if (!isNearBottom) {
+                    indicator.style.display = 'block';
+                } else {
+                    indicator.style.display = 'none';
+                }
+            });
+            
+            // Scroll to bottom on click of indicator
+            document.querySelector('.scroll-indicator').addEventListener('click', function() {
+                scrollToBottom();
+            });
+        }
+
+        // Send message handler
+        function sendMessageHandler() {
+            const textInput = document.getElementById('text');
+            const messageText = textInput.value.trim();
+            
+            if (messageText === '') return;
+            
+            sendMessage(currentUser, messageText);
+            textInput.value = '';
+            textInput.style.height = 'auto';
+        }
+
+        // Send message function
+        async function sendMessage(sender, messageText) {
+            try {
+                // Add message to Firestore with sender information
+                await db.collection('messages').add({
+                    text: messageText,
+                    sender: sender,
+                    timestamp: new Date(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+            } catch (error) {
+                console.error("Error sending message: ", error);
+            }
+        }
+
+        // Load messages from Firestore
+        function loadMessages() {
+            db.collection('messages')
+                .orderBy('createdAt', 'asc')
+                .onSnapshot((snapshot) => {
+                    const messagesContainer = document.getElementById('messages-container');
+                    
+                    // Clear only the message elements, not the indicator
+                    const existingMessages = messagesContainer.querySelectorAll('.message');
+                    existingMessages.forEach(msg => msg.remove());
+                    
+                    snapshot.forEach((doc) => {
+                        const msg = doc.data();
+                        displayMessage(msg);
+                    });
+                    
+                    // Scroll to bottom if near bottom
+                    if (isNearBottom) {
+                        scrollToBottom();
+                    }
+                });
+        }
+
+        // Display message in the chat
+        function displayMessage(msg) {
+            const messagesContainer = document.getElementById('messages-container');
+            const time = msg.timestamp ? 
+                new Date(msg.timestamp.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
+                new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${msg.sender}`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">${msg.text}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            // Insert before the typing indicator
+            const typingIndicator = messagesContainer.querySelector('.typing-indicator');
+            messagesContainer.insertBefore(messageDiv, typingIndicator);
+        }
+
+        // Scroll to bottom of messages
+        function scrollToBottom() {
+            const messagesContainer = document.getElementById('messages-container');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            isNearBottom = true;
+            document.querySelector('.scroll-indicator').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
